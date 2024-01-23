@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 5px;
+            margin: 20px auto;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 24px;
+            border: 2px solid #333;
+            cursor: pointer;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="board"></div>
+<div id="message" class="message"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const board = document.getElementById("board");
+        const messageElement = document.getElementById("message");
+        let currentPlayer = "X";
+        let boardState = ["", "", "", "", "", "", "", "", ""];
+
+        function checkWinner() {
+            const winningCombinations = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+
+            for (const combo of winningCombinations) {
+                const [a, b, c] = combo;
+                if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
+                    return boardState[a];
+                }
+            }
+
+            return null;
+        }
+
+        function checkDraw() {
+            return !boardState.includes("");
+        }
+
+        function updateMessage() {
+            const winner = checkWinner();
+            if (winner) {
+                messageElement.textContent = `Player ${winner} wins!`;
+            } else if (checkDraw()) {
+                messageElement.textContent = "It's a draw!";
+            } else {
+                messageElement.textContent = `Player ${currentPlayer}'s turn`;
+            }
+        }
+
+        function handleClick(index) {
+            if (boardState[index] === "" && !checkWinner() && !checkDraw()) {
+                boardState[index] = currentPlayer;
+                renderBoard();
+                currentPlayer = currentPlayer === "X" ? "O" : "X";
+                updateMessage();
+            }
+        }
+
+        function renderBoard() {
+            board.innerHTML = "";
+            boardState.forEach((value, index) => {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.textContent = value;
+                cell.addEventListener("click", () => handleClick(index));
+                board.appendChild(cell);
+            });
+        }
+
+        renderBoard();
+        updateMessage();
+    });
+</script>
+
+</body>
+</html>
